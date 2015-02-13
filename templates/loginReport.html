@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>#DATE# Login Report</title>
+    <style>
+        #container {
+            margin: auto;
+            text-align: center;
+        }
+
+        table, td, th {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        table {
+            margin: auto;
+        }
+
+        td, th {
+            padding-top: 3px;
+            padding-bottom: 3px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .userTable,
+        .userTable th,
+        .userTable td{
+            border: 1px solid dimgrey;
+        }
+
+        #sUserTable,
+        #sUserTable th,
+        #sUserTable td{
+            background: #EEFFEE;
+        }
+        #fUserTable,
+        #fUserTable th,
+        #fUserTable td{
+            background: #FFEEEE;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div id="successIPContainer">
+        <h4 class="tableTitle">Successful Logins for #DATE# by IP Address</h4>
+        #STABLE_IP#
+    </div>
+    <div id="failIPContainer">
+        <h4 class="tableTitle">Failed Logins for #DATE# by IP Address</h4>
+        #FTABLE_IP#
+    </div>
+    <hr>
+    <div id="successUserContainer">
+        <h4 class="tableTitle">Successful Logins for #DATE# by IP Address</h4>
+        #STABLE_USER#
+    </div>
+    <div id="failUserContainer">
+        <h4 class="tableTitle">Failed Logins for #DATE# by IP Address</h4>
+        #FTABLE_USER#
+    </div>
+    <hr>
+    <h2>Raw data</h2>
+
+    <div id="successContainer">
+        <h4 class="tableTitle">Successful Logins for #DATE#</h4>
+        #STABLE#
+    </div>
+    <div id="failContainer">
+        <h4 class="tableTitle">Failed Logins for #DATE#</h4>
+        #FTABLE#
+    </div>
+</div>
+</body>
+</html>
