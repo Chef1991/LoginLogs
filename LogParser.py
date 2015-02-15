@@ -5,13 +5,16 @@ __author__ = 'tylercook'
 import csv
 import sys
 import time
+from geo_ip import GeoIP
 from PageGen import Table, Template
+
 
 def get_lines(filename):
     lines = list()
     with open(filename, "r") as f:
         lines = f.readlines()
     return lines
+
 
 def parse_csv(filename, headerRow=False):
     """
@@ -29,15 +32,17 @@ def parse_csv(filename, headerRow=False):
             rows.append(row)
     if headerRow:
         header = rows.pop(0)
-    return (rows, header)
+    return rows, header
 
-def get_ip_list(logs, descending=True, ip_index=1):
+
+def get_ip_list(logs, gip,descending=True, ip_index=1):
     """
     get a list of ips that appear in the logs and how many times they appear
     :param logs:            list(list)                  list of logs
+    :param gip:             GeoIP                       Instance of GeoIP class
     :param descending:      bool        Default:True    order the logs are sorted
     :param ip_index:        int         Default:1       index of the ip address in the log
-    :return:                list(list)                  list[i][j], j=0: ip, j=1 count
+    :return:                list(list)                  list[i][j], j=0: ip, j=1 count, j=3 Country Code
     """
     ips = dict()
     for log in logs:
@@ -48,10 +53,11 @@ def get_ip_list(logs, descending=True, ip_index=1):
             ips[ip] = 1
     rtn = list()
     for ip, count in ips.items():
-        rtn.append([ip, count])
+        rtn.append([ip, count, gip.get_country(ip)])
     rtn = sorted(rtn, key=lambda l: l[1],reverse=descending)
     rtn.append(["Total", len(logs)])
     return rtn
+
 
 def get_user_list(logs, uname_index=0):
     """
@@ -74,6 +80,7 @@ def get_user_list(logs, uname_index=0):
     rtn.append(["Total", len(logs)])
     return rtn
 
+
 def __get_defaults():
     """
     returns a tuple of the defaults.
@@ -87,6 +94,7 @@ def __get_defaults():
     report_dir = "%s/reports" % base_dir
     output = "%s/logs.html" % report_dir
     return date, output
+
 
 def __parse_args():
     """
@@ -110,7 +118,6 @@ def __parse_args():
     return date, out_file
 
 
-
 def __main():
     base_dir = os.path.dirname(os.path.realpath(__file__))
     report_dir = "%s/reports" % base_dir
@@ -122,6 +129,7 @@ def __main():
 
     date, out_file = __parse_args()
 
+    gip = GeoIP()
 
     success_data, success_header = parse_csv(success_file, True)
     success_table = Table(success_data, success_header)
@@ -130,10 +138,10 @@ def __main():
     fail_table = Table(fail_data, fail_header)
 
     s_ip_data = get_ip_list(success_data)
-    s_ip_table = Table(s_ip_data, ["IP Address", "Count"])
+    s_ip_table = Table(s_ip_data, ["IP Address", "Count", "Country"])
 
     f_ip_data = get_ip_list(fail_data)
-    f_ip_table = Table(f_ip_data, ["IP Address", "Count"])
+    f_ip_table = Table(f_ip_data, ["IP Address", "Count", "Country"])
 
     s_user_data = get_user_list(success_data)
     s_user_table = Table(s_user_data, ["Username", "Count"], t_class="userTable", css_id="sUserTable", style="color: green")
